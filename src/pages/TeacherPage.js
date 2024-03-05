@@ -27,7 +27,7 @@ const CourseForm = () => {
     const { courseName, description, price, image, language, author } =
       courseData;
     const res = await fetch(
-      "https://coursean-485fc-default-rtdb.firebaseio.com/coursedata.json",
+      "https://coursean-97eec-default-rtdb.firebaseio.com/coursedata.json",
       {
         method: "POST",
         headers: {

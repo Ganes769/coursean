@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 // Login.js
-import React, { useState } from "react";
-import "../Login.css";
+import React, { useContext, useState } from "react";
+
 import { useDispatch } from "react-redux";
 import { updateName, updatePassword } from "../reducers/accounslice";
 import { useNavigate } from "react-router-dom";
@@ -12,71 +12,57 @@ import {
 } from "firebase/auth";
 import { auth } from "../Firebase-config";
 import { useSelector } from "react-redux";
+import { AuthContext } from "./Authcontext";
 const Login = () => {
-  const userName = useSelector((state) => state.account.username);
-  const [users, setUser] = useState({});
-  onAuthStateChanged(auth, (currentUser) => {
-    setUser(currentUser);
-  });
-
-  const [loginPassword, setLoginPassword] = useState("");
-  const [loginemail, setLoginemail] = useState("");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const handleLogin = () => {
-    if (!loginemail) return alert("Username and password field are required");
+  const [email, getEmail] = useState("");
+  const [password, getPassword] = useState("");
+  const signupContext = useContext(AuthContext);
+
+  const { login, currentUser } = signupContext;
+  function handleLogin(e) {
+    e.preventDefault();
     try {
-      const user = signInWithEmailAndPassword(auth, loginemail, loginPassword);
-      if (users.email !== loginemail) {
-        alert("Please enter the correct data");
-      }
-      console.log(users);
-      if (users.email === loginemail) {
-        navigate("/");
-      }
-    } catch (er) {
-      console.log(er);
+      login(email, password);
+    } catch (e) {
+      console.log(e);
     }
-  };
-
+    if (currentUser.email === email) {
+      navigate("/");
+    } else {
+      alert("Please enter  valid email and password");
+    }
+  }
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <h5>To, Get Started You must login or signup !</h5>
-
-        {/* Login Form */}
-        <form>
-          <h2>Login</h2>
-          <label htmlFor="signupUsername">Usename:</label>
+    <div className="signup-container">
+      <h2>Log In</h2>
+      <form className="signup-form">
+        <div className="form-group">
+          <label htmlFor="email">Email:</label>
           <input
-            type="text"
-            id="username"
-            defaultValue={userName}
-            disabled
-            onChange={(e) => setLoginemail(e.target.value)}
-          />
-
-          <label htmlFor="signupUsername">Email:</label>
-          <input
+            value={email}
+            onChange={(e) => getEmail(e.target.value)}
             type="email"
-            id="signupUsername"
-            value={loginemail}
-            onChange={(e) => setLoginemail(e.target.value)}
+            id="email"
+            name="email"
+            placeholder="Enter your email"
           />
-
-          <label htmlFor="loginPassword">Password:</label>
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password:</label>
           <input
+            value={password}
+            onChange={(e) => getPassword(e.target.value)}
             type="password"
-            id="loginPassword"
-            value={loginPassword}
-            onChange={(e) => setLoginPassword(e.target.value)}
+            id="password"
+            name="password"
+            placeholder="Enter your password"
           />
-
-          <button type="button" onClick={handleLogin}>
-            Login
-          </button>
-        </form>
-      </div>
+        </div>
+        <button onClick={handleLogin} type="submit" className="signup-btn">
+          Log In
+        </button>
+      </form>
     </div>
   );
 };

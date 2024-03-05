@@ -17,7 +17,6 @@ import Footer from "./components/Footer";
 import LiveClass from "./pages/LiveCllass";
 
 function App() {
-  const userName = useSelector((state) => state.account.username);
   return (
     <BrowserRouter>
       <Navbar />
@@ -32,6 +31,7 @@ function App() {
         <Route path="/courses/:id" element={<SingleCourse />} />
         <Route path="/category/:category" element={<Courses />} />
         <Route path="/cart" element={<Cart />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/fetch" element={<FirebaseDataFetcher />} />

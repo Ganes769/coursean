@@ -1,15 +1,17 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { MdMenu, MdShoppingCart } from "react-icons/md";
 import { Link, NavLink } from "react-router-dom";
 import { useSidebarContext } from "../context/sidebar_context";
 import { useCartContext } from "../context/cart_context";
 import { useSelector } from "react-redux";
-import SearchComponent from "./SearchComponent";
+import SearchComponent, { Searchprovider } from "./SearchComponent";
 import courses from "../utils/data";
+import { AuthContext } from "../pages/Authcontext";
 const Navbar = () => {
-  const userName = useSelector((state) => state.account.username);
-  console.log(userName);
+  const user = useContext(AuthContext);
+  const { currentUser } = user;
+
   const { total_items } = useCartContext();
   const { openSidebar } = useSidebarContext();
   return (
@@ -21,7 +23,8 @@ const Navbar = () => {
           </Link>
 
           <SearchComponent data={courses} />
-          {userName ? (
+
+          {currentUser ? (
             <NavLink to="/teachermode">
               <button className="go cfff s15 fontb">Become a Tutor</button>
             </NavLink>

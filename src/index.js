@@ -6,6 +6,7 @@ import { CoursesProvider } from "./context/courses_context";
 import { CartProvider } from "./context/cart_context";
 import { Provider } from "react-redux";
 import store from "./Store";
+import AuthProvider, { AuthContext } from "./pages/Authcontext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -13,7 +14,9 @@ root.render(
     <CoursesProvider>
       <CartProvider>
         <Provider store={store}>
-          <App />
+          <AuthProvider>
+            <App />
+          </AuthProvider>
         </Provider>
       </CartProvider>
     </CoursesProvider>

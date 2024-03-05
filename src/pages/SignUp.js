@@ -1,77 +1,68 @@
-import React, { useState } from "react";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable react-hooks/rules-of-hooks */
+import React, { useContext, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { auth } from "../Firebase-config";
-import "../Login.css";
-import { updateName } from "../reducers/accounslice";
-function Signup() {
-  const dispatch = useDispatch();
+import "../Signup.css"; // Import CSS file for styling
+import { AuthContext } from "./Authcontext";
+
+export default function Signup() {
   const navigate = useNavigate();
-  const [loginUsername, setLoginUsername] = useState("");
-  const [signupUsername, setSignupUsername] = useState("");
-  const [signupPassword, setSignupPassword] = useState("");
-  function handleLogin() {
+  const [email, getEmail] = useState("");
+  const [password, getPassword] = useState("");
+  const signupContext = useContext(AuthContext);
+
+  const { signup, currentUser } = signupContext;
+  async function handleclick(e) {
+    e.preventDefault();
+
+    try {
+      await signup(email, password);
+      if (currentUser) {
+        navigate("/");
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  function gotologin() {
     navigate("/login");
   }
-  const handleSignup = () => {
-    try {
-      if (!loginUsername) return alert("username cannont be empty");
-      const user = createUserWithEmailAndPassword(
-        auth,
-        signupUsername,
-        signupPassword
-      );
-      console.log(user);
-      if (!signupUsername && !signupPassword)
-        return alert("please enter your details");
-      console.log(user);
-    } catch (er) {
-      console.log(er);
-    }
-    dispatch(updateName(loginUsername));
-
-    setSignupUsername("");
-    setSignupPassword("");
-  };
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <form>
-          <h2>To Get Started Signup</h2>
-          <label htmlFor="loginUsername">Username:</label>
+    <div className="signup-container">
+      <h2>Sign Up</h2>
+      <form className="signup-form">
+        <div className="form-group">
+          <label htmlFor="email">Email:</label>
           <input
-            type="text"
-            id="loginUsername"
-            value={loginUsername}
-            onChange={(e) => setLoginUsername(e.target.value)}
-          />
-          <label htmlFor="signupUsernames">Email:</label>
-          <input
+            value={email}
+            onChange={(e) => getEmail(e.target.value)}
             type="email"
-            id="signupUsernames"
-            value={signupUsername}
-            onChange={(e) => setSignupUsername(e.target.value)}
+            id="email"
+            name="email"
+            placeholder="Enter your email"
           />
-
-          <label htmlFor="signupPassword">Password:</label>
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password:</label>
           <input
+            value={password}
+            onChange={(e) => getPassword(e.target.value)}
             type="password"
-            id="signupPassword"
-            value={signupPassword}
-            onChange={(e) => setSignupPassword(e.target.value)}
+            id="password"
+            name="password"
+            placeholder="Enter your password"
           />
-
-          <button type="button" onClick={handleSignup}>
-            Signup
-          </button>
-          <h3>or</h3>
-          <button type="button" onClick={handleLogin}>
-            LogIn
-          </button>
-        </form>
-      </div>
+        </div>
+        <button onClick={handleclick} type="submit" className="signup-btn">
+          Sign Up
+        </button>
+      </form>
+      <p className="already-have-account">
+        Already have an account? <a onClick={gotologin}>Log in</a>
+      </p>
     </div>
   );
 }
-export default Signup;

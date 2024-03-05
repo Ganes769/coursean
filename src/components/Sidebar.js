@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { MdClose } from "react-icons/md";
 import { Link, Navigate, useNavigate } from "react-router-dom";
@@ -7,14 +7,20 @@ import { useCoursesContext } from "../context/courses_context";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Welcome from "./Welcome";
+import { AuthContext } from "../pages/Authcontext";
 const Sidebar = () => {
-  const userName = useSelector((state) => state.account.username);
+  const user = useContext(AuthContext);
+  const { currentUser, logout } = user;
+  console.log(currentUser);
   const { categories } = useCoursesContext();
   const nav = useNavigate();
   const { closeSidebar, isSidebarOpen } = useSidebarContext();
   function handlestream() {
-    if (!userName) nav("/signup");
-    // if (userName) alert("You got logged in already");
+    if (!currentUser) nav("/signup");
+  }
+  function handlelogout() {
+    logout();
+    nav("/");
   }
   return (
     <SidebarWrapper
@@ -29,6 +35,7 @@ const Sidebar = () => {
         <MdClose />
       </button>
       <div className="sidebar-content">
+        {currentUser && <div>{`Hi ${currentUser.email}`}</div>}
         <h6 className="fs-18">Top Categories</h6>
         <ul className="sidebar-category">
           {categories.map((category, idx) => {
@@ -41,13 +48,17 @@ const Sidebar = () => {
             );
           })}
         </ul>
-        {
+
+        {!currentUser && (
           <button onClick={handlestream} className="section rel">
-            <h4 className="title s24 fontb">
-              {!userName ? "Get Started" : `${userName}`}
-            </h4>
+            <h4 className="title s24 fontb">Get Started</h4>
           </button>
-        }
+        )}
+        {currentUser && (
+          <button onClick={handlelogout} className="section rel">
+            <h4 className="title s24 fontb">LogOut</h4>
+          </button>
+        )}
       </div>
     </SidebarWrapper>
   );
